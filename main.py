@@ -1,47 +1,50 @@
 import pygame
 import random
 
-pygame.init()  # Инициализация всех импортированных модулей pygame
+pygame.init()
 
-SCREEN_WIDTH = 800  # Ширина экрана
-SCREEN_HEIGHT = 600  # Высота экрана
-screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))  # Создание окна игры
+SCREEN_WIDTH = 800
+SCREEN_HEIGHT = 600
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
-pygame.display.set_caption("Игра Тир")  # Установка названия окна
-icon = pygame.image.load("img/40883.jpg")  # Загрузка иконки приложения
-pygame.display.set_icon(icon)  # Установка иконки окна
+pygame.display.set_caption("Игра Тир")
+icon = pygame.image.load("img/40883.jpg")
+pygame.display.set_icon(icon)
 
-target_img = pygame.image.load("img/target.png")  # Загрузка изображения мишени
-target_width = 80  # Ширина мишени
-target_height = 80  # Высота мишени
+target_img = pygame.image.load("img/target.png")
+target_width = 80
+target_height = 80
 
-# Начальная позиция мишени, случайно выбирается в пределах границ экрана
+# Начальная позиция мишени
 target_x = random.randint(0, SCREEN_WIDTH - target_width)
 target_y = random.randint(0, SCREEN_HEIGHT - target_height)
 
-# Случайный цвет фона
+# Случайная скорость перемещения мишени по осям x и y
+speed_x = random.randint(-5, 5)
+speed_y = random.randint(-5, 5)
+
 color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
 
 running = True
-while running:  # Главный цикл игры
-    screen.fill(color)  # Заливка экрана случайным цветом
+while running:
+    screen.fill(color)
 
     # Обработка событий
     for event in pygame.event.get():
-        if event.type == pygame.QUIT:  # Событие закрытия окна
+        if event.type == pygame.QUIT:
             running = False
-        if event.type == pygame.MOUSEBUTTONDOWN:  # Событие нажатия на кнопку мыши
-            mouse_x, mouse_y = pygame.mouse.get_pos()  # Получение координат мыши
-            # Проверка попадания по мишени
-            if target_x < mouse_x < target_x + target_width and target_y < mouse_y < target_y + target_height:
-                # Если попали по мишени, перемещаем её
-                target_x = random.randint(0, SCREEN_WIDTH - target_width)
-                target_y = random.randint(0, SCREEN_HEIGHT - target_height)
 
-    screen.blit(target_img, (target_x, target_y))  # Отрисовка мишени на новом месте
-    pygame.display.update()  # Обновление содержимого всего экрана
+    # Обновление позиции мишени
+    target_x += speed_x
+    target_y += speed_y
 
-pygame.quit()  # Закрытие и выход из pygame
+    # Проверка выхода мишени за пределы экрана и изменение направления при необходимости
+    if target_x <= 0 or target_x + target_width >= SCREEN_WIDTH:
+        speed_x = -speed_x
+    if target_y <= 0 or target_y + target_height >= SCREEN_HEIGHT:
+        speed_y = -speed_y
 
+    screen.blit(target_img, (target_x, target_y))
+    pygame.display.update()
 
-
+pygame.quit()
